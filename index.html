@@ -336,52 +336,67 @@
             }
         });
     </script>
-    <script>
-  // Registrar Service Worker
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('sw.js')
-        .then(function(registration) {
-          console.log('SW registered: ', registration);
-        })
-        .catch(function(registrationError) {
-          console.log('SW registration failed: ', registrationError);
-        });
-    });
-  }
 
-  // Manejar el evento de instalación
-  let deferredPrompt;
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
+  <script>
+// Detectar si es móvil
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+// Manejar instalación
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  
+  // Mostrar botón de instalación en móviles
+  if (isMobile) {
+    showInstallButton();
+  }
+});
+
+function showInstallButton() {
+  const installBtn = document.createElement('button');
+  installBtn.innerHTML = '📲 Instalar App';
+  installBtn.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    font-weight: bold;
+  `;
+  
+  installBtn.onclick = async () => {
+    if (!deferredPrompt) return;
     
-    // Opcional: Mostrar un botón de instalación
-    const installButton = document.createElement('button');
-    installButton.textContent = 'Instalar App';
-    installButton.style.cssText = `
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #3498db;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      z-index: 1000;
-    `;
-    installButton.onclick = () => {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('Usuario aceptó instalar');
-        }
-        deferredPrompt = null;
-      });
-    };
-    document.body.appendChild(installButton);
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      installBtn.remove();
+    }
+    deferredPrompt = null;
+  };
+  
+  document.body.appendChild(installBtn);
+}
+
+// Registrar Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    try {
+      const registration = await navigator.serviceWorker.register('sw.js');
+      console.log('SW registrado:', registration);
+    } catch (error) {
+      console.log('Error SW:', error);
+    }
   });
+}
 </script>
 
 </body>

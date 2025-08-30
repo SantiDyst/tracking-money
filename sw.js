@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gastos-app-v1';
+const CACHE_NAME = 'gastos-app-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -7,24 +7,34 @@ const urlsToCache = [
   '/icon-512.png'
 ];
 
-self.addEventListener('install', function(event) {
+// Instalación
+self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(function(cache) {
-        return cache.addAll(urlsToCache);
-      })
+      .then(cache => cache.addAll(urlsToCache))
+      .then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener('fetch', function(event) {
+// Activación
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cache => {
+          if (cache !== CACHE_NAME) {
+            return caches.delete(cache);
+          }
+        })
+      );
+    })
+  );
+});
+
+// Fetch
+self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
-      .then(function(response) {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      }
-    )
+      .then(response => response || fetch(event.request))
   );
 });
