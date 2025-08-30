@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control de Gastos</title>
     <!-- Agrega esto en el head, después de <title> -->
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/tracking-money/manifest.json">
     <meta name="theme-color" content="#3498db">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -386,17 +386,19 @@ function showInstallButton() {
   document.body.appendChild(installBtn);
 }
 
-// Registrar Service Worker
+// Registrar Service Worker con la ruta correcta
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
-      const registration = await navigator.serviceWorker.register('sw.js');
+      // Ruta ABSOLUTA para GitHub Pages
+      const registration = await navigator.serviceWorker.register('/tracking-money/sw.js');
       console.log('SW registrado:', registration);
     } catch (error) {
       console.log('Error SW:', error);
     }
   });
 }
+
 </script>
 
 </body>
