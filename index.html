@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Gastos</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #ecf0f1;
+            --accent: #3498db;
+            --expense: #e74c3c;
+            --background: #f9f9f9;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--primary);
+            padding: 15px;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: var(--primary);
+            color: var(--secondary);
+            border-radius: 8px;
+        }
+        
+        .balance-container {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .balance-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .balance-container input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 18px;
+            text-align: right;
+        }
+        
+        .expense-form {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 10px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .form-group textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        
+        button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .expenses-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .expenses-table th {
+            background-color: var(--primary);
+            color: var(--secondary);
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .expenses-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .expenses-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .amount {
+            text-align: right;
+            color: var(--expense);
+            font-weight: bold;
+        }
+        
+        .date {
+            white-space: nowrap;
+        }
+        
+        .reason {
+            word-break: break-word;
+        }
+        
+        .total-row {
+            font-weight: bold;
+            background-color: #f5f5f5;
+        }
+        
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0 5px;
+            width: auto;
+        }
+        
+        .delete-btn:hover {
+            color: var(--expense);
+        }
+        
+        @media (max-width: 480px) {
+            .expenses-table {
+                font-size: 14px;
+            }
+            
+            .expenses-table th, 
+            .expenses-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Control de Gastos</h1>
+    </header>
+    
+    <div class="balance-container">
+        <label for="initial-balance">Saldo Inicial:</label>
+        <input type="number" id="initial-balance" step="0.01" placeholder="0.00" value="262.00">
+    </div>
+    
+    <div class="expense-form">
+        <div class="form-group">
+            <label for="expense-amount">Monto del Gasto:</label>
+            <input type="number" id="expense-amount" step="0.01" placeholder="0.00">
+        </div>
+        
+        <div class="form-group">
+            <label for="expense-reason">Motivo:</label>
+            <textarea id="expense-reason" placeholder="Descripción del gasto"></textarea>
+        </div>
+        
+        <button id="add-expense">Agregar Gasto</button>
+    </div>
+    
+    <table class="expenses-table">
+        <thead>
+            <tr>
+                <th>Monto</th>
+                <th>Motivo</th>
+                <th>Fecha</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="expenses-list">
+            <!-- Los gastos se agregarán aquí dinámicamente -->
+        </tbody>
+        <tfoot>
+            <tr class="total-row">
+                <td colspan="4" style="text-align: right;">
+                  Saldo restante: <span id="remaining-balance">0.00</span>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos del DOM
+            const initialBalanceInput = document.getElementById('initial-balance');
+            const expenseAmountInput = document.getElementById('expense-amount');
+            const expenseReasonInput = document.getElementById('expense-reason');
+            const addExpenseButton = document.getElementById('add-expense');
+            const expensesList = document.getElementById('expenses-list');
+            const remainingBalanceSpan = document.getElementById('remaining-balance');
+            
+            // Cargar datos guardados
+            let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+            let initialBalance = parseFloat(localStorage.getItem('initialBalance')) || 0;
+            
+            // Establecer saldo inicial
+            initialBalanceInput.value = initialBalance.toFixed(2);
+            // Si es cero, dejar el input vacío para mejor UX
+            if (initialBalance === 0) {
+            initialBalanceInput.value = '';
+            }
+            updateRemainingBalance();
+            
+            // Mostrar gastos existentes
+            expenses.forEach(expense => {
+                addExpenseToDOM(expense);
+            });
+            
+            // Evento para actualizar saldo inicial
+            initialBalanceInput.addEventListener('change', function() {
+                initialBalance = parseFloat(this.value) || 0;
+                localStorage.setItem('initialBalance', initialBalance);
+                updateRemainingBalance();
+            });
+            
+            // Evento para agregar gasto
+            addExpenseButton.addEventListener('click', function() {
+                const amount = parseFloat(expenseAmountInput.value);
+                const reason = expenseReasonInput.value.trim();
+                
+                if (isNaN(amount) || amount <= 0) {
+                    alert('Por favor ingresa un monto válido.');
+                    return;
+                }
+                
+                if (reason === '') {
+                    alert('Por favor ingresa un motivo.');
+                    return;
+                }
+                
+                const newExpense = {
+                    amount: amount,
+                    reason: reason,
+                    date: new Date().toLocaleDateString('es-ES')
+                };
+                
+                expenses.push(newExpense);
+                localStorage.setItem('expenses', JSON.stringify(expenses));
+                
+                addExpenseToDOM(newExpense);
+                updateRemainingBalance();
+                
+                // Limpiar formulario
+                expenseAmountInput.value = '';
+                expenseReasonInput.value = '';
+            });
+            
+            // Función para agregar gasto a la tabla
+            function addExpenseToDOM(expense) {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td class="amount">-${expense.amount.toFixed(2)}</td>
+                    <td class="reason">${expense.reason}</td>
+                    <td class="date">${expense.date}</td>
+                    <td>
+                        <button class="delete-btn">×</button>
+                    </td>
+                `;
+                
+                // Evento para eliminar gasto
+                row.querySelector('.delete-btn').addEventListener('click', function() {
+                    const index = expenses.findIndex(e => 
+                        e.amount === expense.amount && 
+                        e.reason === expense.reason && 
+                        e.date === expense.date
+                    );
+                    
+                    if (index !== -1) {
+                        expenses.splice(index, 1);
+                        localStorage.setItem('expenses', JSON.stringify(expenses));
+                        row.remove();
+                        updateRemainingBalance();
+                    }
+                });
+                
+                expensesList.appendChild(row);
+            }
+            
+            // Función para actualizar el saldo restante
+            function updateRemainingBalance() {
+                const totalExpenses = expenses.reduce((total, expense) => total + expense.amount, 0);
+                const remainingBalance = initialBalance - totalExpenses;
+                remainingBalanceSpan.textContent = remainingBalance.toFixed(2);
+            }
+        });
+    </script>
+</body>
+</html>
