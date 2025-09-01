@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control de Gastos</title>
-    <!-- Agrega esto en el head, después de <title> -->
     <link rel="manifest" href="/tracking-money/manifest.json">
     <meta name="theme-color" content="#3498db">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -21,70 +20,98 @@
             --background: #f9f9f9;
         }
         
+        /* Modo oscuro */
+        .dark {
+            --background: #1a1a1a;
+            --primary: #34495e;
+            --secondary: #ecf0f1;
+            --accent: #3498db;
+            --expense: #e74c3c;
+        }
+        
+        .dark body {
+            background-color: #1a1a1a;
+            color: #ecf0f1;
+        }
+        
+        .dark .balance-container,
+        .dark .expense-form,
+        .dark .expenses-table {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+        
+        .dark .balance-container input,
+        .dark .form-group input,
+        .dark .form-group textarea,
+        .dark .form-group select {
+            background-color: #34495e;
+            color: #ecf0f1;
+            border-color: #566573;
+        }
+        
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
 
-            .dark #remaining-balance {
-    background-color: #1c331c;
-    color: #27ae60;
-    border-color: #2ecc71;
-}
+        /* Saldo Restante - Verde positivo */
+        #remaining-balance {
+            background-color: #f0f9f0;
+            color: #2ecc71;
+            font-weight: bold;
+            border: 1px solid #d5f5e3;
+        }
 
-.dark #total-expenses {
-    background-color: #3c1c1c;
-    color: #c0392b;
-    border-color: #e74c3c;
-}
+        /* Total Gastados - Rojo negativo */ 
+        #total-expenses {
+            background-color: #fef5f5;
+            color: #e74c3c;
+            font-weight: bold;
+            border: 1px solid #fadbd8;
+        }
 
-.dark #expense-amount {
-    background-color: #1c2c3c;
-    border-color: #3498db;
-}
+        /* Monto del Gasto - Azul */
+        #expense-amount {
+            background-color: #f0f8ff;
+            border: 1px solid #d6eaf8;
+        }
 
-.dark #expense-reason {
-    background-color: #2c3c4c;
-    border-color: #566573;
-}
+        /* Motivo - Gris suave */
+        #expense-reason {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+        }
 
+        /* Estilos para modo oscuro */
+        .dark #remaining-balance {
+            background-color: #1c331c;
+            color: #27ae60;
+            border-color: #2ecc71;
+        }
 
-/* Saldo Restante - Verde positivo */
-#remaining-balance {
-    background-color: #f0f9f0;
-    color: #2ecc71;
-    font-weight: bold;
-    border: 1px solid #d5f5e3;
-}
+        .dark #total-expenses {
+            background-color: #3c1c1c;
+            color: #c0392b;
+            border-color: #e74c3c;
+        }
 
-/* Total Gastados - Rojo negativo */ 
-#total-expenses {
-    background-color: #fef5f5;
-    color: #e74c3c;
-    font-weight: bold;
-    border: 1px solid #fadbd8;
-}
+        .dark #expense-amount {
+            background-color: #1c2c3c;
+            border-color: #3498db;
+        }
 
-/* Monto del Gasto - Azul */
-#expense-amount {
-    background-color: #f0f8ff;
-    border: 1px solid #d6eaf8;
-}
+        .dark #expense-reason {
+            background-color: #2c3c4c;
+            border-color: #566573;
+        }
 
-/* Motivo - Gris suave */
-#expense-reason {
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
-}
-
-/* Estilos comunes para inputs de solo lectura */
-#remaining-balance, #total-expenses {
-    cursor: not-allowed;
-}
-
+        /* Estilos comunes para inputs de solo lectura */
+        #remaining-balance, #total-expenses {
+            cursor: not-allowed;
+        }
 
         body {
             background-color: var(--background);
@@ -101,6 +128,7 @@
             background-color: var(--primary);
             color: var(--secondary);
             border-radius: 8px;
+            position: relative;
         }
         
         .balance-container {
@@ -144,7 +172,7 @@
             font-weight: bold;
         }
         
-        .form-group input, .form-group textarea {
+        .form-group input, .form-group textarea, .form-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -171,12 +199,6 @@
         button:hover {
             background-color: #2980b9;
         }
-        
-        #total-expenses {
-    background-color: #fff3f3;
-    color: #e74c3c;
-    font-weight: bold;
-}
 
         .expenses-table {
             width: 100%;
@@ -218,11 +240,6 @@
             word-break: break-word;
         }
         
-        .total-row {
-            font-weight: bold;
-            background-color: #f5f5f5;
-        }
-        
         .delete-btn {
             background: none;
             border: none;
@@ -235,6 +252,43 @@
         
         .delete-btn:hover {
             color: var(--expense);
+        }
+        
+        /* Toggle de tema */
+        .theme-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: 1px solid var(--secondary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            color: var(--secondary);
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .update-btn {
+            position: fixed;
+            top: 80px;
+            right: 10px;
+            z-index: 9999;
+            background: #e67e22;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         
         @media (max-width: 480px) {
@@ -252,11 +306,16 @@
 <body>
     <header>
         <h1>Control de Gastos</h1>
+        <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
     </header>
     
+    <button class="update-btn" onclick="clearSW()">
+        ♻️ Actualizar App
+    </button>
+    
     <div class="balance-container">
-    <label for="remaining-balance">Saldo Restante:</label>
-    <input type="text" id="remaining-balance" readonly value="0.00">
+        <label for="remaining-balance">Saldo Restante:</label>
+        <input type="text" id="remaining-balance" readonly value="0.00">
     </div>
 
     <div class="balance-container">
@@ -274,14 +333,24 @@
             <label for="expense-reason">Motivo:</label>
             <textarea id="expense-reason" placeholder="Descripción del gasto"></textarea>
         </div>
+
+        <div class="form-group">
+            <label for="expense-category">Categoría:</label>
+            <select id="expense-category">
+                <option value="comida">🍔 Comida</option>
+                <option value="transporte">🚗 Transporte</option>
+                <option value="entretenimiento">🎬 Entretenimiento</option>
+                <option value="salud">⚕️ Salud</option>
+                <option value="otros">📦 Otros</option>
+            </select>
+        </div>
         
         <button id="add-expense">Agregar Gasto</button>
     </div>
     
-    <!-- Total Gastados -->
     <div class="balance-container">
-    <label for="total-expenses">Total Gastados:</label>
-    <input type="text" id="total-expenses" readonly value="0.00">
+        <label for="total-expenses">Total Gastados:</label>
+        <input type="text" id="total-expenses" readonly value="0.00">
     </div>
 
     <table class="expenses-table">
@@ -289,20 +358,13 @@
             <tr>
                 <th>Monto</th>
                 <th>Motivo</th>
+                <th>Categoría</th>
                 <th>Fecha</th>
                 <th></th>
             </tr>
         </thead>
         <tbody id="expenses-list">
-            <!-- Los gastos se agregarán aquí dinámicamente -->
         </tbody>
-       <!--  <tfoot>
-            <tr class="total-row">
-                <td colspan="4" style="text-align: right;">
-                  Saldo restante: <span id="remaining-balance">0.00</span>
-                </td>
-            </tr>
-        </tfoot> -->
     </table>
 
     <script>
@@ -311,19 +373,25 @@
             const initialBalanceInput = document.getElementById('initial-balance');
             const expenseAmountInput = document.getElementById('expense-amount');
             const expenseReasonInput = document.getElementById('expense-reason');
+            const expenseCategorySelect = document.getElementById('expense-category');
             const addExpenseButton = document.getElementById('add-expense');
             const expensesList = document.getElementById('expenses-list');
-            const remainingBalanceSpan = document.getElementById('remaining-balance');
             
             // Cargar datos guardados
             let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
             let initialBalance = parseFloat(localStorage.getItem('initialBalance')) || 0;
             
+            // Cargar tema guardado
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark');
+                document.querySelector('.theme-toggle').textContent = '☀️';
+            }
+            
             // Establecer saldo inicial
             initialBalanceInput.value = initialBalance.toFixed(2);
-            // Si es cero, dejar el input vacío para mejor UX
             if (initialBalance === 0) {
-            initialBalanceInput.value = '';
+                initialBalanceInput.value = '';
             }
             updateRemainingBalance();
             
@@ -332,17 +400,38 @@
                 addExpenseToDOM(expense);
             });
             
-            // Evento para actualizar saldo inicial
+            // Validar saldo inicial
             initialBalanceInput.addEventListener('change', function() {
-                initialBalance = parseFloat(this.value) || 0;
+                const value = parseFloat(this.value) || 0;
+                if (value < 0) {
+                    alert('El saldo inicial no puede ser negativo');
+                    this.value = '0';
+                    return;
+                }
+                initialBalance = value;
                 localStorage.setItem('initialBalance', initialBalance);
                 updateRemainingBalance();
+            });
+            
+            // Navegación con Enter
+            expenseAmountInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    expenseReasonInput.focus();
+                }
+            });
+
+            expenseReasonInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    addExpenseButton.click();
+                }
             });
             
             // Evento para agregar gasto
             addExpenseButton.addEventListener('click', function() {
                 const amount = parseFloat(expenseAmountInput.value);
                 const reason = expenseReasonInput.value.trim();
+                const category = expenseCategorySelect.value;
                 
                 if (isNaN(amount) || amount <= 0) {
                     alert('Por favor ingresa un monto válido.');
@@ -357,6 +446,7 @@
                 const newExpense = {
                     amount: amount,
                     reason: reason,
+                    category: category,
                     date: new Date().toLocaleDateString('es-ES')
                 };
                 
@@ -369,119 +459,167 @@
                 // Limpiar formulario
                 expenseAmountInput.value = '';
                 expenseReasonInput.value = '';
+                expenseCategorySelect.selectedIndex = 0;
             });
             
             // Función para agregar gasto a la tabla
             function addExpenseToDOM(expense) {
                 const row = document.createElement('tr');
                 
+                // Para gastos existentes sin categoría
+                const categoryIcon = getCategoryIcon(expense.category || 'otros');
+                
                 row.innerHTML = `
                     <td class="amount">-${expense.amount.toFixed(2)}</td>
                     <td class="reason">${expense.reason}</td>
+                    <td>${categoryIcon}</td>
                     <td class="date">${expense.date}</td>
                     <td>
                         <button class="delete-btn">×</button>
                     </td>
                 `;
                 
-                // Evento para eliminar gasto
+                // Evento para eliminar gasto - CORREGIDO
                 row.querySelector('.delete-btn').addEventListener('click', function() {
-                    const index = expenses.findIndex(e => 
-                        e.amount === expense.amount && 
-                        e.reason === expense.reason && 
-                        e.date === expense.date
-                    );
-                    
-                    if (index !== -1) {
-                        expenses.splice(index, 1);
-                        localStorage.setItem('expenses', JSON.stringify(expenses));
-                        row.remove();
-                        updateRemainingBalance();
+                    if (confirm('¿Estás seguro de eliminar este gasto?')) {
+                        const index = expenses.findIndex(e => 
+                            e.amount === expense.amount && 
+                            e.reason === expense.reason && 
+                            e.date === expense.date
+                        );
+                        
+                        if (index !== -1) {
+                            expenses.splice(index, 1);
+                            localStorage.setItem('expenses', JSON.stringify(expenses));
+                            row.remove();
+                            updateRemainingBalance();
+                        }
                     }
                 });
                 
                 expensesList.appendChild(row);
             }
             
+            // Función para obtener ícono de categoría
+            function getCategoryIcon(category) {
+                const icons = {
+                    comida: '🍔',
+                    transporte: '🚗',
+                    entretenimiento: '🎬',
+                    salud: '⚕️',
+                    otros: '📦'
+                };
+                return icons[category] || '📦';
+            }
+            
             // Función para actualizar el saldo restante
-
             function updateRemainingBalance() {
-  const totalExpenses = expenses.reduce((total, expense) => total + expense.amount, 0);
-  const remainingBalance = initialBalance - totalExpenses;
-  
-  // Actualizar saldo restante
-  document.getElementById('remaining-balance').value = remainingBalance.toFixed(2);
-  
-  // Actualizar total gastados (NUEVO)
-  document.getElementById('total-expenses').value = totalExpenses.toFixed(2);
-}
-  
+                const totalExpenses = expenses.reduce((total, expense) => total + expense.amount, 0);
+                const remainingBalance = initialBalance - totalExpenses;
+                
+                document.getElementById('remaining-balance').value = remainingBalance.toFixed(2);
+                document.getElementById('total-expenses').value = totalExpenses.toFixed(2);
+            }
         });
+
+        // Función para cambiar tema
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const themeToggle = document.querySelector('.theme-toggle');
+            
+            if (document.body.classList.contains('dark')) {
+                themeToggle.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // PWA y Service Worker
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            if (isMobile) {
+                showInstallButton();
+            }
+        });
+
+        function showInstallButton() {
+            const installBtn = document.createElement('button');
+            installBtn.innerHTML = '📲 Instalar App';
+            installBtn.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: #3498db;
+                color: white;
+                border: none;
+                padding: 12px 18px;
+                border-radius: 25px;
+                cursor: pointer;
+                z-index: 1000;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                font-weight: bold;
+            `;
+            
+            installBtn.onclick = async () => {
+                if (!deferredPrompt) return;
+                
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                
+                if (outcome === 'accepted') {
+                    installBtn.remove();
+                }
+                deferredPrompt = null;
+            };
+            
+            document.body.appendChild(installBtn);
+        }
+
+        // Función para limpiar cache
+        function clearSW() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    registrations.forEach(registration => registration.unregister());
+                    caches.keys().then(cacheNames => {
+                        cacheNames.forEach(cacheName => caches.delete(cacheName));
+                    });
+                    alert('Cache limpiado. Recarga la página.');
+                    location.reload();
+                });
+            }
+        }
+
+        // Registrar Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                try {
+                    const registration = await navigator.serviceWorker.register('/tracking-money/sw.js');
+                    console.log('SW registrado:', registration);
+                } catch (error) {
+                    console.log('Error SW:', error);
+                }
+            });
+        }
+
+        // Auto-actualización
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                window.location.reload();
+            });
+
+            setInterval(() => {
+                navigator.serviceWorker.getRegistration('/tracking-money/').then(reg => {
+                    if (reg) reg.update();
+                });
+            }, 60000);
+        }
     </script>
-
-  <script>
-// Detectar si es móvil
-const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-// Manejar instalación
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  
-  // Mostrar botón de instalación en móviles
-  if (isMobile) {
-    showInstallButton();
-  }
-});
-
-function showInstallButton() {
-  const installBtn = document.createElement('button');
-  installBtn.innerHTML = '📲 Instalar App';
-  installBtn.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #3498db;
-    color: white;
-    border: none;
-    padding: 12px 18px;
-    border-radius: 25px;
-    cursor: pointer;
-    z-index: 1000;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    font-weight: bold;
-  `;
-  
-  installBtn.onclick = async () => {
-    if (!deferredPrompt) return;
-    
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    
-    if (outcome === 'accepted') {
-      installBtn.remove();
-    }
-    deferredPrompt = null;
-  };
-  
-  document.body.appendChild(installBtn);
-}
-
-// Registrar Service Worker con la ruta correcta
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
-    try {
-      // Ruta ABSOLUTA para GitHub Pages
-      const registration = await navigator.serviceWorker.register('/tracking-money/sw.js');
-      console.log('SW registrado:', registration);
-    } catch (error) {
-      console.log('Error SW:', error);
-    }
-  });
-}
-
-</script>
-
 </body>
 </html>

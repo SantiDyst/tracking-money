@@ -1,4 +1,5 @@
-const CACHE_NAME = 'gastos-app-v3';
+
+const CACHE_NAME = 'gastos-app-v4'; // Incrementar siempre que hagas cambios
 const BASE_PATH = '/tracking-money/';
 const urlsToCache = [
   BASE_PATH,
@@ -39,3 +40,16 @@ self.addEventListener('fetch', event => {
     );
   }
 });
+
+// Forzar update del Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(registrations => {
+    registrations.forEach(registration => {
+      registration.update();
+      registration.unregister().then(() => {
+        /* navigator.serviceWorker.register('/tracking-money/sw.js'); */
+        navigator.serviceWorker.register('/tracking-money/sw-v2.js');
+      });
+    });
+  });
+}
