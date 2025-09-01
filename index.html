@@ -281,14 +281,22 @@
             top: 80px;
             right: 10px;
             z-index: 9999;
+            background: rgba(230, 126, 34, 0.3); /* Más transparente */
+            color: rgba(255, 255, 255, 0.6); /* Texto más suave */
+            border: none;
+            padding: 6px 10px; /* Más pequeño */
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 10px; /* Texto más pequeño */
+            box-shadow: none; /* Sin sombra */
+            opacity: 0.4; /* Muy transparente */
+            transition: opacity 0.3s ease;
+        }
+        
+        .update-btn:hover {
+            opacity: 1; /* Solo se ve completo al hacer hover */
             background: #e67e22;
             color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         
         @media (max-width: 480px) {
